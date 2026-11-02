@@ -7,7 +7,6 @@ import Project from "./models/Project.js";
 import Skill from "./models/Skill.js";
 import Service from "./models/Service.js";
 
-import { requireAdmin } from "./middleware/auth.js";
 import { createCrudRouter } from "./utils/crudRouter.js";
 
 import adminRoutes from "./routes/admin.js";
@@ -39,8 +38,6 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests without an Origin header
-      // (for example, server-to-server requests).
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -94,17 +91,6 @@ app.use("/api/admin", adminRoutes);
 
 app.use(
   "/api/projects",
-
-  (req, res, next) => {
-    if (
-      req.headers.authorization?.startsWith("Bearer ")
-    ) {
-      return requireAdmin(req, res, next);
-    }
-
-    return next();
-  },
-
   createCrudRouter(Project, {
     publicFilter: {
       published: true,
@@ -136,17 +122,6 @@ app.use(
 
 app.use(
   "/api/skills",
-
-  (req, res, next) => {
-    if (
-      req.headers.authorization?.startsWith("Bearer ")
-    ) {
-      return requireAdmin(req, res, next);
-    }
-
-    return next();
-  },
-
   createCrudRouter(Skill, {
     publicFilter: {
       published: true,
@@ -174,17 +149,6 @@ app.use(
 
 app.use(
   "/api/services",
-
-  (req, res, next) => {
-    if (
-      req.headers.authorization?.startsWith("Bearer ")
-    ) {
-      return requireAdmin(req, res, next);
-    }
-
-    return next();
-  },
-
   createCrudRouter(Service, {
     publicFilter: {
       published: true,
